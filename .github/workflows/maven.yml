@@ -30,4 +30,4 @@ jobs:
         run: |
           cd HelloWorldFunction
           mvn clean install
-          aws lambda update-function-code --function-name segundaFuncaoJava --zip-file fileb://build/libs/HelloWorld-1.0.jar
+          aws lambda update-function-code --function-name segundaFuncaoJava --zip-file fileb://target/HelloWorld-1.0.jar
