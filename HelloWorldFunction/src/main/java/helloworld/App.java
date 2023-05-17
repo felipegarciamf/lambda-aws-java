@@ -32,7 +32,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             System.out.println(System.getenv("MINHA_VAR"));
 
             final String pageContents = this.getPageContents("https://checkip.amazonaws.com");
-            String output = String.format("{ \"message\": \"hello world\", \"location\": \"%s\", \"region\": \"%s\" }", pageContents, aws_region);
+            String output = String.format("{ \"message\": \"hello world\", \"testedeploy\": \"foi?? foi!!\", \"location\": \"%s\", \"region\": \"%s\" }", pageContents, aws_region);
 
 
 
