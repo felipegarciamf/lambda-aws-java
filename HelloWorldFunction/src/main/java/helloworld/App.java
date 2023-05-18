@@ -34,7 +34,7 @@ public class App implements RequestHandler<S3Event, String> {
         String bucketName = s3EventNotificationRecord.getS3().getBucket().getName();
         String objectKey = s3EventNotificationRecord.getS3().getObject().getKey();
 
-        String resultado = S3Client.builder().region(Region.US_EAST_1).build().getObject(GetObjectRequest.builder().bucket(bucketName).key(objectKey).build(), (resp, in) -> {
+        String resultado = S3Client.builder().region(Region.US_EAST_2).build().getObject(GetObjectRequest.builder().bucket(bucketName).key(objectKey).build(), (resp, in) -> {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String line = null;
             while ((line = reader.readLine()) != null) {
