@@ -12,44 +12,38 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.amazonaws.services.lambda.runtime.events.S3Event;
+import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
 /**
  * Handler for requests to Lambda function.
  */
-public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-
-    public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("X-Custom-Header", "application/json");
-
-        APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent()
-                .withHeaders(headers);
-        String aws_region = System.getenv("AWS_REGION");
-
-        try {
-
-            System.out.println(System.getenv("MINHA_VAR"));
-
-            final String pageContents = this.getPageContents("https://checkip.amazonaws.com");
-            String output = String.format("{ \"message\": \"hello world\", \"testedeploy\": \"foi?? foi!!\", \"location\": \"%s\", \"region\": \"%s\" }", pageContents, aws_region);
+public class App implements RequestHandler<S3Event, String> {
 
 
+    @Override
+    public String handleRequest(S3Event s3Event, Context context) {
 
-            return response
-                    .withStatusCode(200)
-                    .withBody(output);
-        } catch (IOException e) {
-            return response
-                    .withBody("{}")
-                    .withStatusCode(500);
-        }
-    }
+        S3EventNotification.S3EventNotificationRecord s3EventNotificationRecord = s3Event.getRecords().get(0);
 
-    private String getPageContents(String address) throws IOException{
-        URL url = new URL(address);
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))) {
-            return br.lines().collect(Collectors.joining(System.lineSeparator()));
-        }
+        String bucketName = s3EventNotificationRecord.getS3().getBucket().getName();
+        String objectKey = s3EventNotificationRecord.getS3().getObject().getKey();
+
+        String resultado = S3Client.builder().region(Region.US_EAST_1).build().getObject(GetObjectRequest.builder().bucket(bucketName).key(objectKey).build(), (resp, in) -> {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            return line;
+
+        });
+        System.out.println(resultado);
+        return "TUDO FOI OK";
     }
 }
