@@ -36,7 +36,7 @@ public class App implements RequestHandler<S3Event, String> {
         String bucketName = s3EventNotificationRecord.getS3().getBucket().getName();
         String key = s3EventNotificationRecord.getS3().getObject().getKey();
 
-        System.out.println(key);
+        System.out.println("ESSA É A CHAVE: " + key);
 
         String resultado = S3Client.builder().region(Region.US_EAST_2).build().getObject(GetObjectRequest.builder().bucket(bucketName).key(key).build(), (resp, in) -> {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
