@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -29,21 +30,26 @@ public class App implements RequestHandler<S3Event, String> {
     @Override
     public String handleRequest(S3Event s3Event, Context context) {
 
-        S3EventNotification.S3EventNotificationRecord s3EventNotificationRecord = s3Event.getRecords().get(1);
+        List<S3EventNotification.S3EventNotificationRecord> records = s3Event.getRecords();
 
-        String bucketName = s3EventNotificationRecord.getS3().getBucket().getName();
-        String objectKey = s3EventNotificationRecord.getS3().getObject().getKey();
+        for (S3EventNotification.S3EventNotificationRecord s3EventNotificationRecord : records
+             ) {
 
-        String resultado = S3Client.builder().region(Region.US_EAST_2).build().getObject(GetObjectRequest.builder().bucket(bucketName).key(objectKey).build(), (resp, in) -> {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-            return line;
+            String bucketName = s3EventNotificationRecord.getS3().getBucket().getName();
+            String objectKey = s3EventNotificationRecord.getS3().getObject().getKey();
 
-        });
-        System.out.println(resultado);
+            String resultado = S3Client.builder().region(Region.US_EAST_2).build().getObject(GetObjectRequest.builder().bucket(bucketName).key(objectKey).build(), (resp, in) -> {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                return line;
+
+            });
+            System.out.println(resultado);
+
+        }
         return "TUDO FOI OK";
     }
 }
