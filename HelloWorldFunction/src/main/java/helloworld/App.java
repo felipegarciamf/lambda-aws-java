@@ -32,6 +32,9 @@ public class App implements RequestHandler<S3Event, String> {
 
         List<S3EventNotification.S3EventNotificationRecord> records = s3Event.getRecords();
 
+        try {
+
+
         for (S3EventNotification.S3EventNotificationRecord s3EventNotificationRecord : records
              ) {
 
@@ -49,6 +52,9 @@ public class App implements RequestHandler<S3Event, String> {
             });
             System.out.println(resultado);
 
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return "TUDO FOI OK";
     }
