@@ -32,16 +32,13 @@ public class App implements RequestHandler<S3Event, String> {
 
         List<S3EventNotification.S3EventNotificationRecord> records = s3Event.getRecords();
 
-        try {
-
 
         for (S3EventNotification.S3EventNotificationRecord s3EventNotificationRecord : records
              ) {
 
             String bucketName = s3EventNotificationRecord.getS3().getBucket().getName();
-            String objectKey = s3EventNotificationRecord.getS3().getObject().getKey();
 
-            String resultado = S3Client.builder().region(Region.US_EAST_2).build().getObject(GetObjectRequest.builder().bucket(bucketName).key(objectKey).build(), (resp, in) -> {
+            String resultado = S3Client.builder().region(Region.US_EAST_2).build().getObject(GetObjectRequest.builder().bucket(bucketName).build(), (resp, in) -> {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 String line = null;
                 while ((line = reader.readLine()) != null) {
@@ -52,9 +49,6 @@ public class App implements RequestHandler<S3Event, String> {
             });
             System.out.println(resultado);
 
-        }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return "TUDO FOI OK";
     }
