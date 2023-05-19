@@ -30,27 +30,24 @@ public class App implements RequestHandler<S3Event, String> {
     @Override
     public String handleRequest(S3Event s3Event, Context context) {
 
-        List<S3EventNotification.S3EventNotificationRecord> records = s3Event.getRecords();
+        S3EventNotification.S3EventNotificationRecord s3EventNotificationRecord = s3Event.getRecords().get(0);
 
 
-        for (S3EventNotification.S3EventNotificationRecord s3EventNotificationRecord : records
-             ) {
+        String bucketName = s3EventNotificationRecord.getS3().getBucket().getName();
+        String key = s3EventNotificationRecord.getS3().getObject().getKey();
 
-            String bucketName = s3EventNotificationRecord.getS3().getBucket().getName();
-            String key = s3EventNotificationRecord.getS3().getObject().getKey();
+        String resultado = S3Client.builder().region(Region.US_EAST_2).build().getObject(GetObjectRequest.builder().bucket(bucketName).key(key).build(), (resp, in) -> {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            return line;
 
-            String resultado = S3Client.builder().region(Region.US_EAST_2).build().getObject(GetObjectRequest.builder().bucket(bucketName).key(key).build(), (resp, in) -> {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-                return line;
+        });
+        System.out.println(resultado);
 
-            });
-            System.out.println(resultado);
 
-        }
         return "TUDO FOI OK";
     }
 }
