@@ -1,31 +1,25 @@
 package helloworld;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 
 /**
  * Handler for requests to Lambda function.
  */
 public class App implements RequestHandler<S3Event, String> {
 
+    private static final Logger logger = LogManager.getLogger(App.class);
 
     @Override
     public String handleRequest(S3Event s3Event, Context context) {
@@ -48,6 +42,12 @@ public class App implements RequestHandler<S3Event, String> {
 
         });
         System.out.println(resultado);
+
+        try {
+            throw new Exception("foi que foi");
+        } catch (Exception e) {
+            logger.error("Ocorreu um erro na aplicação!", e);
+        }
 
 
         return "TUDO FOI OK";
