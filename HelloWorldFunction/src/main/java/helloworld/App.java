@@ -24,6 +24,8 @@ public class App implements RequestHandler<S3Event, String> {
     @Override
     public String handleRequest(S3Event s3Event, Context context) {
 
+        try {
+
         S3EventNotification.S3EventNotificationRecord s3EventNotificationRecord = s3Event.getRecords().get(0);
         System.out.println("cheguei aqui");
 
@@ -43,8 +45,7 @@ public class App implements RequestHandler<S3Event, String> {
         });
         System.out.println(resultado);
 
-        try {
-            throw new Exception("foi que foi");
+
         } catch (Exception e) {
             logger.error("Ocorreu um erro na aplicação!", e);
         }
